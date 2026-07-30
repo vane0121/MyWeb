@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
     "Computer Programmer",
     'Full Stack Developer',
     "Software Developer",
-    'ReactJS & Blazor Developer',
+    'ReactJS & Blazor Dev',
     'ASP.NET Core Specialist',
     'RESTful API Builder',
-    'Freelance Web Developer'
+    'Freelance Web Dev'
   ];
   const typedEl = document.getElementById('typed-role');
   let roleIndex = 0, charIndex = 0, deleting = false;
