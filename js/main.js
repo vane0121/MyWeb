@@ -70,7 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- Typed role animation ---------- */
   const roles = [
+    "Computer Programmer",
     'Full Stack Developer',
+    "Software Developer",
     'ReactJS & Blazor Developer',
     'ASP.NET Core Specialist',
     'RESTful API Builder',
@@ -117,45 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const formStatus = document.getElementById('formStatus');
 
   if (form) {
-    // form.addEventListener('submit', async (e) => {
-    //   e.preventDefault();
-
-    //   const payload = {
-    //     name: document.getElementById('clientName').value.trim(),
-    //     email: document.getElementById('clientEmail').value.trim(),
-    //     project_type: document.getElementById('projectType').value,
-    //     budget: document.getElementById('budget').value,
-    //     message: document.getElementById('message').value.trim(),
-    //     status: 'New'
-    //   };
-
-    //   if (!payload.name || !payload.email || !payload.project_type || !payload.budget || !payload.message) {
-    //     showStatus('Please fill in all fields.', 'error');
-    //     return;
-    //   }
-
-    //   setLoading(true);
-
-    //   try {
-    //     const res = await fetch('tables/freelance_inquiries', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify(payload)
-    //     });
-
-    //     if (!res.ok) throw new Error('Request failed');
-
-    //     await res.json();
-    //     showStatus('🎉 Thank you! Your project inquiry has been sent. Vanessa will reach out to you soon.', 'success');
-    //     form.reset();
-    //   } catch (err) {
-    //     console.error(err);
-    //     showStatus('Something went wrong while sending your inquiry. Please try again or email directly.', 'error');
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // });
-
     form.addEventListener("submit", async (e) => {
 
       e.preventDefault();
@@ -228,4 +191,136 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* ---------- Feedback ---------- */
+  const feedbackForm = document.getElementById('feedbackForm');
+  const feedbackStatus = document.getElementById('feedbackStatus');
+  const feedbackList = document.getElementById('feedbackList');
+
+  if (feedbackForm) {
+    feedbackForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(feedbackForm);
+      const feedbackText = formData.get("feedbackMessage");
+      const visitorEmail = formData.get("visitorEmail");
+
+      try {
+        const response = await fetch(feedbackForm.action, {
+          method: "POST",
+          body: formData,
+          headers: { Accept: "application/json" }
+        });
+
+        if (response.ok) {
+          feedbackStatus.textContent = "🎉 Thank you! Your feedback has been sent.";
+          feedbackStatus.className = "form-status success";
+
+          const feedbackItem = document.createElement('div');
+          feedbackItem.className = 'feedback-item';
+          feedbackItem.innerHTML = `<strong>${visitorEmail}</strong><br>${feedbackText}`;
+          feedbackList.appendChild(feedbackItem);
+
+          await saveFeedback(visitorEmail, feedbackText);
+
+          feedbackForm.reset();
+
+          setTimeout(() => {
+            feedbackStatus.textContent = "";
+            feedbackStatus.className = "form-status";
+          }, 8000);
+        } else {
+          feedbackStatus.textContent = "⚠️ Unable to send feedback. Please try again.";
+          feedbackStatus.className = "form-status error";
+        }
+      } catch (error) {
+        console.error(error);
+        feedbackStatus.textContent = "❌ Something went wrong. Please try again later.";
+        feedbackStatus.className = "form-status error";
+      }
+    });
+  }
+
+  /* ---------- Supabase Save Feedback ---------- */
+  async function saveFeedback(email, message) {
+    const { error } = await supabaseClient
+      .from("feedback")
+      .insert([{ email, message }]);
+
+    if (error) {
+      console.error("Error saving feedback:", error);
+    } else {
+      console.log("Feedback saved successfully!");
+    }
+  }
+
+  /* ---------- Supabase Load Feedback ---------- */
+  let currentPage = 0;
+  const pageSize = 5;
+  let totalPages = 0;
+
+  async function loadFeedback(page = 0) {
+    const start = page * pageSize;
+    const end = start + pageSize - 1;
+
+    const { data, error, count } = await supabaseClient
+      .from("feedback")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(start, end);
+
+    if (!error && data) {
+      feedbackList.innerHTML = "";
+      data.forEach(item => {
+        const feedbackItem = document.createElement("div");
+        feedbackItem.className = "feedback-item";
+        feedbackItem.innerHTML = `<strong>${item.email}</strong><br>${item.message}`;
+        feedbackList.appendChild(feedbackItem);
+      });
+
+      totalPages = Math.ceil(count / pageSize);
+      renderPagination();
+    }
+  }
+
+  function renderPagination() {
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "◀ Previous";
+    prevBtn.disabled = currentPage === 0;
+    prevBtn.onclick = () => {
+      if (currentPage > 0) {
+        currentPage--;
+        loadFeedback(currentPage);
+      }
+    };
+    pagination.appendChild(prevBtn);
+
+    for (let i = 0; i < totalPages && i < 5; i++) {
+      const pageBtn = document.createElement("button");
+      pageBtn.textContent = i + 1;
+      pageBtn.className = (i === currentPage) ? "active" : "";
+      pageBtn.onclick = () => {
+        currentPage = i;
+        loadFeedback(currentPage);
+      };
+      pagination.appendChild(pageBtn);
+    }
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next ▶";
+    nextBtn.disabled = currentPage >= totalPages - 1;
+    nextBtn.onclick = () => {
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        loadFeedback(currentPage);
+      }
+    };
+    pagination.appendChild(nextBtn);
+  }
+
+  // ✅ Call inside DOMContentLoaded
+  loadFeedback();
 });
+

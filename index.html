@@ -22,6 +22,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/challenge.css">
 </head>
 
 <body>
@@ -49,6 +50,8 @@
         <li><a href="#services" class="nav-link">Services</a></li>
         <li><a href="#education" class="nav-link">Education</a></li>
         <li><a href="#achievements" class="nav-link">Achievements</a></li>
+        <li><a href="#challenge" class="nav-link">Challenge</a></li>
+        <li><a href="#feedback" class="nav-link">Feedback</a></li>
         <li><a href="#freelance" class="nav-link nav-cta">Hire Me</a></li>
       </ul>
     </nav>
@@ -76,15 +79,17 @@
           </div>
           <div class="hero-actions">
             <a href="#freelance" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Hire Me Now</a>
-            <a href="resume/Vanessa-Battung-Resume.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i
-                class="fa-solid fa-file-arrow-down"></i> View Resume</a>
+            <a href="resume/Vanessa-Battung-Resume.pdf" target="_blank" rel="noopener noreferrer"
+              class="btn btn-outline"><i class="fa-solid fa-file-arrow-down"></i> View Resume</a>
           </div>
           <div class="hero-socials">
             <a href="mailto:vane0121.vb@gmail.com" aria-label="Email" title="Email"><i
                 class="fa-solid fa-envelope"></i></a>
             <a href="tel:+639772358599" aria-label="Phone" title="Call"><i class="fa-solid fa-phone"></i></a>
-            <a href="https://github.com/vane0121" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><i class="fa-brands fa-github"></i></a>
-            <a href="https://www.linkedin.com/in/vanessa-battung-a6733819b/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="https://github.com/vane0121" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+              title="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/vanessa-battung-a6733819b/" target="_blank" rel="noopener noreferrer"
+              aria-label="LinkedIn" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
           </div>
         </div>
         <div class="hero-visual" data-aos="zoom-in" data-aos-delay="150">
@@ -574,6 +579,146 @@
       </div>
     </section>
 
+    <!-- ===== Challenge / Quiz Section ===== -->
+    <section id="challenge" class="challenge-section">
+      <div class="challenge-bg-grid"></div>
+      <div class="container">
+        <div class="section-header" data-aos="fade-up">
+          <span class="section-tag">Test Your Knowledge</span>
+          <h2 class="section-title">Challenge Yourself</h2>
+          <p class="section-subtitle">Pick a category and test your knowledge. Have fun and see how well you score!</p>
+        </div>
+
+        <!-- Category Selection -->
+        <div class="challenge-container" data-aos="fade-up">
+          <div id="categorySelect" class="category-select">
+            <h3>Choose a Challenge Category:</h3>
+            <div class="category-grid">
+              <button class="category-btn" data-category="general" data-aos="zoom-in" data-aos-delay="0">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>General Trivia</span>
+              </button>
+              <button class="category-btn" data-category="academic" data-aos="zoom-in" data-aos-delay="100">
+                <i class="fa-solid fa-book"></i>
+                <span>Academic</span>
+              </button>
+              <button class="category-btn" data-category="biblical" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-solid fa-cross"></i>
+                <span>Biblical</span>
+              </button>
+              <button class="category-btn" data-category="math" data-aos="zoom-in" data-aos-delay="300">
+                <i class="fa-solid fa-calculator"></i>
+                <span>Math</span>
+              </button>
+              <button class="category-btn" data-category="grammar" data-aos="zoom-in" data-aos-delay="400">
+                <i class="fa-solid fa-pen-nib"></i>
+                <span>English Grammar</span>
+              </button>
+              <button class="category-btn" data-category="philippines">
+                <i class="fa-solid fa-flag"></i>
+                <span>Philippines</span>
+              </button>
+              <button class="category-btn" data-category="music">
+                <i class="fa-solid fa-music"></i>
+                <span>Music</span>
+              </button>
+              <button class="category-btn" data-category="celebrity">
+                <i class="fa-solid fa-star"></i>
+                <span>Celebrity</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quiz Display -->
+          <div id="quizContainer" class="quiz-container" style="display: none;">
+            <div class="quiz-header">
+              <div class="quiz-progress">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span id="questionCount">Question 1 of 5</span>
+              </div>
+              <h3 id="categoryTitle">General Trivia</h3>
+              <button class="btn-close" id="quitBtn" title="Exit Quiz"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="quiz-content">
+              <div class="question-box">
+                <p id="questionText" class="question-text"></p>
+                <div id="answersContainer" class="answers-grid"></div>
+              </div>
+            </div>
+
+            <div class="quiz-footer">
+              <button class="btn btn-secondary" id="prevBtn" style="display: none;">
+                <i class="fa-solid fa-chevron-left"></i> Previous
+              </button>
+              <button class="btn btn-primary" id="nextBtn">
+                Next <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Results Display -->
+          <div id="resultsContainer" class="results-container" style="display: none;">
+            <div class="results-card">
+              <div class="results-icon">
+                <i class="fa-solid fa-trophy"></i>
+              </div>
+              <h2>Quiz Complete!</h2>
+              <div class="score-display">
+                <span class="score-number" id="finalScore">0</span>
+                <span class="score-total">/ 5</span>
+              </div>
+              <p class="score-percentage" id="scorePercentage">0%</p>
+              <p class="score-message" id="scoreMessage"></p>
+
+              <div class="results-details">
+                <h4>Your Answers:</h4>
+                <div id="resultsList"></div>
+              </div>
+
+              <div class="results-actions">
+                <button class="btn btn-primary" id="retryBtn">
+                  <i class="fa-solid fa-redo"></i> Try Again
+                </button>
+                <button class="btn btn-outline" id="anotherBtn">
+                  <i class="fa-solid fa-arrow-right"></i> Try Another Category
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Feedback Section ===== -->
+    <section id="feedback">
+      <div class="section-header">
+        <span class="section-tag">Feedback</span>
+        <h2 class="section-title">Visitor Feedback</h2>
+        <p class="section-subtitle">Share your thoughts and suggestions below</p>
+      </div>
+      <form id="feedbackForm" action="https://formspree.io/f/xbdnejzy" method="POST">
+        <div class="form-group">
+          <label for="visitorEmail">Your Email</label>
+          <input type="email" id="visitorEmail" name="visitorEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="feedbackInput">Your Feedback</label>
+          <textarea id="feedbackInput" name="feedbackMessage" placeholder="Write your feedback here..."
+            required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary"><span>Submit Feedback</span></button>
+      </form>
+      <p id="feedbackStatus" class="form-status"></p>
+      <div id="feedbackList"></div>
+      <div id="pagination" class="pagination">
+        <button id="prevPage">◀ Previous</button>
+        <button id="nextPage">Next ▶</button>
+      </div>
+    </section>
+
     <!-- ===== Freelance / Hire Me Section ===== -->
     <section id="freelance" class="freelance-section">
       <div class="freelance-bg-grid"></div>
@@ -678,8 +823,10 @@
       <div class="footer-socials">
         <a href="mailto:vane0121.vb@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
         <a href="tel:+639772358599" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
-        <a href="https://github.com/vane0121" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-        <a href="https://www.linkedin.com/in/vanessa-battung-a6733819b/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/vane0121" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i
+            class="fa-brands fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/vanessa-battung-a6733819b/" target="_blank" rel="noopener noreferrer"
+          aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
       </div>
     </div>
   </footer>
@@ -688,7 +835,21 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+
+    // Use your actual values here
+    const supabaseClient = createClient(
+      "https://lcynrowpldzjbseyhuxf.supabase.co",   // Project URL
+      "sb_publishable_72pqLyIEJC8F--9iBC8SjQ_5e3SXlq4" // Publishable (anon) key
+    );
+  </script>
+
   <script src="js/main.js"></script>
+  <script src="js/challenge.js"></script>
 </body>
 
 </html>
