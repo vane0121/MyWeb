@@ -240,6 +240,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Handle the button click to exit the current quiz and show the category selection again
+  const quizContainer = document.getElementById("quizContainer");
+  const categorySelect = document.getElementById("categorySelect");
+  const switchCategoryBtn = document.getElementById("switchCategoryBtn");
+
+  if (switchCategoryBtn) {
+    switchCategoryBtn.addEventListener("click", () => {
+      // Hide quiz
+      quizContainer.style.display = "none";
+      // Show category selection again
+      categorySelect.style.display = "block";
+      // Reset quiz state
+      currentQuestionIndex = 0;
+      score = 0;
+      document.getElementById("progressFill").style.width = "0%";
+      document.getElementById("questionCount").textContent = "";
+    });
+  }
+
   /* ---------- Supabase Save Feedback ---------- */
   async function saveFeedback(email, message) {
     const { error } = await supabaseClient

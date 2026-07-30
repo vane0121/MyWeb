@@ -244,6 +244,21 @@
   justify-content: space-between;
 }
 
+/* Quiz switch button */
+#switchCategoryBtn {
+  margin-left: 10px;
+  background: transparent;
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+#switchCategoryBtn:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+
 /* ===== Results Container ===== */
 .results-container {
   animation: slideIn 0.5s ease-out;
