@@ -721,7 +721,8 @@
           <textarea id="feedbackInput" name="feedbackMessage" placeholder="Write your feedback here..."
             required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary"><span>Submit Feedback</span></button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i><span>Submit
+            Feedback</span></button>
       </form>
       <p id="feedbackStatus" class="form-status"></p>
       <div id="feedbackList"></div>
@@ -825,43 +826,74 @@
         </div>
       </div>
     </section>
-  </main>
 
-  <!-- ===== Footer ===== -->
-  <footer class="site-footer">
-    <div class="container footer-container">
-      <a href="#home" class="logo">VB<span class="logo-dot">.</span></a>
-      <p>&copy; <span id="year"></span> Vanessa Battung. All rights reserved.</p>
-      <div class="footer-socials">
-        <a href="mailto:vane0121.vb@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-        <a href="tel:+639772358599" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
-        <a href="https://github.com/vane0121" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i
-            class="fa-brands fa-github"></i></a>
-        <a href="https://www.linkedin.com/in/vanessa-battung-a6733819b/" target="_blank" rel="noopener noreferrer"
-          aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+    <!-- ===== AI Portfolio Assistant ===== -->
+    <section id="chatbot" class="chat-section hidden">
+      <div class="chat-container" id="chat-window">
+        <!-- Hide Button -->
+        <button id="closeChatBtn" class="chat-close" onclick="toggleChat()" aria-label="Close Chat">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="chat-messages" id="messages">
+          <div class="message bot">Have questions about Vanessa's experience, skills, projects, or certifications? I am here to help.</div>
+        </div>
+        <div class="chat-input">
+          <textarea id="chatMessage" placeholder="Type your message..."></textarea>
+          <button id="send"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
       </div>
-    </div>
-  </footer>
+    </section>
 
-  <button id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+    <!-- ===== Footer ===== -->
+    <footer class="site-footer">
+      <div class="container footer-container">
+        <a href="#home" class="logo">VB<span class="logo-dot">.</span></a>
+        <p>&copy; <span id="year"></span> Vanessa Battung. All rights reserved.</p>
+        <div class="footer-socials">
+          <a href="mailto:vane0121.vb@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+          <a href="tel:+639772358599" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
+          <a href="https://github.com/vane0121" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i
+              class="fa-brands fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/vanessa-battung-a6733819b/" target="_blank" rel="noopener noreferrer"
+            aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+      </div>
+    </footer>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <!-- Back to Top -->
+    <button id="backToTop" class="floating-btn" title="Back to top">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const { createClient } = supabase;
+    <!-- AI Chat Toggle -->
+    <button id="chatToggleBtn" class="floating-btn ai-btn" onclick="toggleChat()" title="Open AI Portfolio Assistant">
+      <i class="fa-solid fa-robot"></i>
+    </button>
 
-    // Use your actual values here
-    const supabaseClient = createClient(
-      "https://lcynrowpldzjbseyhuxf.supabase.co",   // Project URL
-      "sb_publishable_72pqLyIEJC8F--9iBC8SjQ_5e3SXlq4" // Publishable (anon) key
-    );
-  </script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 
-  <script src="js/main.js"></script>
-  <script src="js/challenge.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const { createClient } = supabase;
+
+      // Use your actual values here
+      const supabaseClient = createClient(
+        "https://lcynrowpldzjbseyhuxf.supabase.co",   // Project URL
+        "sb_publishable_72pqLyIEJC8F--9iBC8SjQ_5e3SXlq4" // Publishable (anon) key
+      );
+    </script>
+
+    <script>
+      function toggleChat() {
+        const chat = document.getElementById("chatbot");
+        chat.classList.toggle("hidden");
+      }
+    </script>
+
+    <script src="js/main.js"></script>
+    <script src="js/challenge.js"></script>
 </body>
 
 </html>

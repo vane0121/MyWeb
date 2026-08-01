@@ -339,7 +339,60 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.appendChild(nextBtn);
   }
 
-  // ✅ Call inside DOMContentLoaded
+  /* ---------- Chat Bot ---------- */
+  document.getElementById("send").addEventListener("click", async () => {
+    const questionBox = document.getElementById("chatMessage");
+    const messages = document.getElementById("messages");
+
+    const question = questionBox.value.trim();
+    if (!question) return;
+
+    // User bubble
+    const userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.innerHTML = `<strong>You:</strong> ${question}`;
+    messages.appendChild(userMsg);
+
+    questionBox.value = "";
+
+    // Loading bubble
+    const loadingMsg = document.createElement("div");
+    loadingMsg.className = "message bot loading";
+    loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking</span>`;
+    messages.appendChild(loadingMsg);
+
+    try {
+      const response = await fetch("https://localhost:7284/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: question })
+      });
+
+      if (!response.ok) throw new Error("API Error");
+
+      const data = await response.json();
+
+      // Replace loading bubble with reply
+      loadingMsg.classList.remove("loading");
+      loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
+
+    } catch (err) {
+      // Replace loading bubble with fallback
+      loadingMsg.classList.remove("loading");
+      loadingMsg.innerHTML = `<strong>AI:</strong> This feature is still in development.`;
+
+      console.error(err);
+    }
+
+    // Auto-scroll
+    messages.scrollTop = messages.scrollHeight;
+  });
+
+  document.getElementById("chat-toggle").addEventListener("click", function () {
+    const chatWindow = document.getElementById("chat-window");
+    chatWindow.classList.toggle("show");
+  });
+
   loadFeedback();
 });
 
