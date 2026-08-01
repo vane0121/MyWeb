@@ -388,11 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
     messages.scrollTop = messages.scrollHeight;
   });
 
-  document.getElementById("chat-toggle").addEventListener("click", function () {
-    const chatWindow = document.getElementById("chat-window");
-    chatWindow.classList.toggle("show");
-  });
-
   loadFeedback();
 });
 
