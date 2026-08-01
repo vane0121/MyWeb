@@ -1820,3 +1820,31 @@ WORK EXPERIENCE
   100% { content: "..."; }
 }
 
+
+
+/* ===== Override the Chat Box style (note: remove the style above) ===== */
+/* Lighten chat container only */
+#chat-window.chat-container {
+  background: linear-gradient(160deg, #1f2a40, #242d45);
+}
+
+#messages .message.bot {
+  background: #2a3550; 
+}
+
+.chat-input {
+  background: #2a3550; 
+}
+
+#chatbot.chat-section {
+  background: #1f2a40; 
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 360px;
+  height: 500px;
+  z-index: 1000;
+  border-radius: 20px; 
+}
