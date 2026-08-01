@@ -5,6 +5,7 @@
     { "src": "css/style.css", "use": "@vercel/static" },
     { "src": "js/challenge.js", "use": "@vercel/static" },
     { "src": "js/main.js", "use": "@vercel/static" },
+    { "src": "images/logo.png", "use": "@vercel/static" },
     { "src": "resume/Vanessa-Battung-Resume.pdf", "use": "@vercel/static" }
   ]
 }
