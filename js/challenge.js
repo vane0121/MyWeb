@@ -217,7 +217,7 @@ function startChallenge(e) {
   currentCategory = e.currentTarget.dataset.category;
   const categoryName = e.currentTarget.textContent.trim();
 
-  currentQuestions = [...challengeData[currentCategory]];
+  currentQuestions = shuffleArray([...challengeData[currentCategory]]);
   currentAnswers = new Array(currentQuestions.length).fill(null);
   currentQuestionIndex = 0;
 
@@ -227,6 +227,15 @@ function startChallenge(e) {
   resultsContainer.style.display = 'none';
 
   displayQuestion();
+}
+
+// ===== Shuffle the Challenge =====
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; 
+  }
+  return array;
 }
 
 // ===== Display Question =====
@@ -352,8 +361,9 @@ function showResults() {
   });
 
   const percentage = Math.round((score / currentQuestions.length) * 100);
-  document.getElementById('finalScore').textContent = score;
-  document.getElementById('scorePercentage').textContent = percentage + '%';
+  document.getElementById('finalScore').textContent = score; 
+  document.getElementById('scoreTotal').textContent = `/ ${currentQuestions.length}`;  
+  document.getElementById('scorePercentage').textContent = percentage + '%';  
 
   let message = '';
   if (percentage === 100) {
