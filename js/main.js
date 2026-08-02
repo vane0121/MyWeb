@@ -339,108 +339,67 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.appendChild(nextBtn);
   }
 
-  // /* ---------- Chat Bot ---------- */
-  // document.getElementById("send").addEventListener("click", async () => {
-  //   const questionBox = document.getElementById("chatMessage");
-  //   const messages = document.getElementById("messages");
-
-  //   const question = questionBox.value.trim();
-  //   if (!question) return;
-
-  //   // User bubble
-  //   const userMsg = document.createElement("div");
-  //   userMsg.className = "message user";
-  //   userMsg.innerHTML = `<strong>You:</strong> ${question}`;
-  //   messages.appendChild(userMsg);
-
-  //   questionBox.value = "";
-
-  //   // Loading bubble
-  //   const loadingMsg = document.createElement("div");
-  //   loadingMsg.className = "message bot loading";
-  //   loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking</span>`;
-  //   messages.appendChild(loadingMsg);
-
-  //   try {
-  //     const response = await fetch("https://localhost:7284/api/chat", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ message: question })
-  //     });
-
-  //     if (!response.ok) throw new Error("API Error");
-
-  //     const data = await response.json();
-
-  //     // Replace loading bubble with reply
-  //     loadingMsg.classList.remove("loading");
-  //     loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
-
-  //   } catch (err) {
-  //     // Replace loading bubble with fallback
-  //     loadingMsg.classList.remove("loading");
-  //     loadingMsg.innerHTML = `<strong>AI:</strong> This feature is still in development.`;
-
-  //     console.error(err);
-  //   }
-
-  //   // Auto-scroll
-  //   messages.scrollTop = messages.scrollHeight;
-  // });
-
   /* ---------- Chat Bot ---------- */
   document.getElementById("send").addEventListener("click", async () => {
     const questionBox = document.getElementById("chatMessage");
     const messages = document.getElementById("messages");
-
     const question = questionBox.value.trim();
     if (!question) return;
 
-    // User bubble
+    // 1. Render User message bubble 
     const userMsg = document.createElement("div");
     userMsg.className = "message user";
     userMsg.innerHTML = `<strong>You:</strong> ${question}`;
     messages.appendChild(userMsg);
 
-    // Auto-scroll right after user message
     messages.scrollTop = messages.scrollHeight;
-
     questionBox.value = "";
 
-    // Loading bubble
+    // 2. Render Loading/Thinking bubble 
     const loadingMsg = document.createElement("div");
     loadingMsg.className = "message bot loading";
     loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking</span>`;
     messages.appendChild(loadingMsg);
 
-    // Auto-scroll right after loader
     messages.scrollTop = messages.scrollHeight;
 
     try {
-      // const response = await fetch("https://localhost:7284/api/chat", {
-      const response = await fetch("https://vanessabattung-api.runasp.net/api/Chat", {
+      const freshTargetEndpoint =
+        "http://vanessabattung-api.runasp.net/api/Chat";
+
+      const dynamicProxyConnectionPath =
+        "https://api.allorigins.win/raw?url=" +
+        encodeURIComponent(freshTargetEndpoint);
+
+      // 3. Executing network fetch command smoothly
+      const response = await fetch(dynamicProxyConnectionPath, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ message: question })
       });
 
-      if (!response.ok) throw new Error("API Error");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server raw error dump:", errorText);
+        throw new Error(`API Error Status: ${response.status}`);
+      }
 
       const data = await response.json();
+      console.log("Parsed API Response Data Object:", data);
 
-      // Replace loading bubble with reply
+      // Replace loading placeholders with your live Gemini text response string
       loadingMsg.classList.remove("loading");
       loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
-
     } catch (err) {
-      // Replace loading bubble with fallback
-      loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `<strong>AI:</strong> This feature is still in development.`;
 
-      console.error(err);
+      // Failover fallback alert handling
+      loadingMsg.classList.remove("loading");
+      loadingMsg.innerHTML = `<strong>AI:</strong> Network connection error. This feature is still in development.`;
+      console.error("Full trace error data printout block:", err);
     }
 
-    // Auto-scroll again after reply
     messages.scrollTop = messages.scrollHeight;
   });
 
