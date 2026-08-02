@@ -339,14 +339,79 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.appendChild(nextBtn);
   }
 
+  // /* ---------- Chat Bot ---------- */
+  // document.getElementById("send").addEventListener("click", async () => {
+  //   const questionBox = document.getElementById("chatMessage");
+  //   const messages = document.getElementById("messages");
+  //   const question = questionBox.value.trim();
+  //   if (!question) return;
+
+  //   // 1. Render User message bubble 
+  //   const userMsg = document.createElement("div");
+  //   userMsg.className = "message user";
+  //   userMsg.innerHTML = `<strong>You:</strong> ${question}`;
+  //   messages.appendChild(userMsg);
+
+  //   messages.scrollTop = messages.scrollHeight;
+  //   questionBox.value = "";
+
+  //   // 2. Render Loading/Thinking bubble 
+  //   const loadingMsg = document.createElement("div");
+  //   loadingMsg.className = "message bot loading";
+  //   loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking</span>`;
+  //   messages.appendChild(loadingMsg);
+
+  //   messages.scrollTop = messages.scrollHeight;
+
+  //   try {
+  //     const freshTargetEndpoint =
+  //       "http://vanessabattung-api.runasp.net/api/Chat";
+
+  //     const dynamicProxyConnectionPath =
+  //       "https://api.allorigins.win/raw?url=" +
+  //       encodeURIComponent(freshTargetEndpoint);
+
+  //     // 3. Executing network fetch command smoothly
+  //     const response = await fetch(dynamicProxyConnectionPath, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({ message: question })
+  //     });
+
+  //     if (!response.ok) {
+  //       const errorText = await response.text();
+  //       console.error("Server raw error dump:", errorText);
+  //       throw new Error(`API Error Status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     console.log("Parsed API Response Data Object:", data);
+
+  //     // Replace loading placeholders with your live Gemini text response string
+  //     loadingMsg.classList.remove("loading");
+  //     loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
+  //   } catch (err) {
+
+  //     // Failover fallback alert handling
+  //     loadingMsg.classList.remove("loading");
+  //     loadingMsg.innerHTML = `<strong>AI:</strong> Network connection error. This feature is still in development.`;
+  //     console.error("Full trace error data printout block:", err);
+  //   }
+
+  //   messages.scrollTop = messages.scrollHeight;
+  // });
+
   /* ---------- Chat Bot ---------- */
   document.getElementById("send").addEventListener("click", async () => {
     const questionBox = document.getElementById("chatMessage");
     const messages = document.getElementById("messages");
     const question = questionBox.value.trim();
+
     if (!question) return;
 
-    // 1. Render User message bubble 
+    // Render User message
     const userMsg = document.createElement("div");
     userMsg.className = "message user";
     userMsg.innerHTML = `<strong>You:</strong> ${question}`;
@@ -355,49 +420,54 @@ document.addEventListener('DOMContentLoaded', () => {
     messages.scrollTop = messages.scrollHeight;
     questionBox.value = "";
 
-    // 2. Render Loading/Thinking bubble 
+    // Render Loading message
     const loadingMsg = document.createElement("div");
     loadingMsg.className = "message bot loading";
-    loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking</span>`;
+    loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking...</span>`;
     messages.appendChild(loadingMsg);
 
     messages.scrollTop = messages.scrollHeight;
 
     try {
-      const freshTargetEndpoint =
+      // Direct API call - NO AllOrigins proxy
+      const apiEndpoint =
         "http://vanessabattung-api.runasp.net/api/Chat";
 
-      const dynamicProxyConnectionPath =
-        "https://api.allorigins.win/raw?url=" +
-        encodeURIComponent(freshTargetEndpoint);
-
-      // 3. Executing network fetch command smoothly
-      const response = await fetch(dynamicProxyConnectionPath, {
+      const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ message: question })
+        body: JSON.stringify({
+          message: question
+        })
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Server raw error dump:", errorText);
-        throw new Error(`API Error Status: ${response.status}`);
+        console.error("Server error:", errorText);
+        throw new Error(`API Error: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Parsed API Response Data Object:", data);
 
-      // Replace loading placeholders with your live Gemini text response string
+      console.log("API Response:", data);
+
+      // Replace loading message
       loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
+      loadingMsg.innerHTML = `
+            <strong>AI:</strong> ${data.reply}
+        `;
+
     } catch (err) {
 
-      // Failover fallback alert handling
+      console.error("Fetch error:", err);
+
       loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `<strong>AI:</strong> Network connection error. This feature is still in development.`;
-      console.error("Full trace error data printout block:", err);
+      loadingMsg.innerHTML = `
+            <strong>AI:</strong> 
+            Unable to connect to the AI service.
+        `;
     }
 
     messages.scrollTop = messages.scrollHeight;
