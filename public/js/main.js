@@ -339,22 +339,91 @@ document.addEventListener('DOMContentLoaded', () => {
     pagination.appendChild(nextBtn);
   }
 
+  // /* ---------- Chat Bot ---------- */
+  // document.getElementById("send").addEventListener("click", async () => {
+  //   const questionBox = document.getElementById("chatMessage");
+  //   const messages = document.getElementById("messages");
+  //   const question = questionBox.value.trim();
+  //   if (!question) return;
+
+  //   // Render User message
+  //   const userMsg = document.createElement("div");
+  //   userMsg.className = "message user";
+  //   userMsg.innerHTML = `<strong>You:</strong> ${question}`;
+  //   messages.appendChild(userMsg);
+  //   messages.scrollTop = messages.scrollHeight;
+  //   questionBox.value = "";
+
+  //   // Render Loading message
+  //   const loadingMsg = document.createElement("div");
+  //   loadingMsg.className = "message bot loading";
+  //   loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking...</span>`;
+  //   messages.appendChild(loadingMsg);
+  //   messages.scrollTop = messages.scrollHeight;
+
+  //   try {
+  //     const apiEndpoint = "/api/chat";
+  //     const response = await fetch(apiEndpoint, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ message: question })
+  //     });
+
+  //     // Check for errors (like 409 or 429)
+  //     if (!response.ok) {
+  //       loadingMsg.classList.remove("loading");
+
+  //       try {
+  //         // Try reading the error body string to find the quota code
+  //         const errData = await response.json();
+  //         const errString = errData.reply || JSON.stringify(errData);
+
+  //         if (errString.includes('"code": 429') || errString.includes('quota')) {
+  //           loadingMsg.innerHTML = `<strong>AI:</strong> I'm a bit overwhelmed with requests right now! Please try asking me again tomorrow.`;
+  //           return;
+  //         }
+  //       } catch (parseError) {
+  //         console.error("Could not parse error response JSON:", parseError);
+  //       }
+
+  //       // Default fallback error message if it's not a quota error
+  //       loadingMsg.innerHTML = `<strong>AI:</strong> Oops, something went wrong on my end. Please try again later.`;
+  //       return;
+  //     }
+
+  //     // If response was 200 OK
+  //     const data = await response.json();
+  //     console.log("API Response:", data);
+
+  //     loadingMsg.classList.remove("loading");
+  //     loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
+
+  //   } catch (err) {
+  //     console.error("Fetch error:", err);
+  //     loadingMsg.classList.remove("loading");
+  //     loadingMsg.innerHTML = `<strong>AI:</strong> Unable to connect to the AI service.`;
+  //   }
+  //   messages.scrollTop = messages.scrollHeight;
+  // });
+
   /* ---------- Chat Bot ---------- */
   document.getElementById("send").addEventListener("click", async () => {
     const questionBox = document.getElementById("chatMessage");
     const messages = document.getElementById("messages");
     const question = questionBox.value.trim();
+
     if (!question) return;
 
-    // Render User message
+    // User message
     const userMsg = document.createElement("div");
     userMsg.className = "message user";
     userMsg.innerHTML = `<strong>You:</strong> ${question}`;
     messages.appendChild(userMsg);
-    messages.scrollTop = messages.scrollHeight;
-    questionBox.value = "";
 
-    // Render Loading message
+    questionBox.value = "";
+    messages.scrollTop = messages.scrollHeight;
+
+    // Loading message
     const loadingMsg = document.createElement("div");
     loadingMsg.className = "message bot loading";
     loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking...</span>`;
@@ -362,50 +431,104 @@ document.addEventListener('DOMContentLoaded', () => {
     messages.scrollTop = messages.scrollHeight;
 
     try {
-      const apiEndpoint = "/api/chat";
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ message: question })
       });
 
-      // Check for errors (like 409 or 429)
-      if (!response.ok) {
-        loadingMsg.classList.remove("loading");
+      let data = {};
 
-        try {
-          // Try reading the error body string to find the quota code
-          const errData = await response.json();
-          const errString = errData.reply || JSON.stringify(errData);
-
-          if (errString.includes('"code": 429') || errString.includes('quota')) {
-            loadingMsg.innerHTML = `<strong>AI:</strong> I'm a bit overwhelmed with requests right now! Please try asking me again tomorrow.`;
-            return;
-          }
-        } catch (parseError) {
-          console.error("Could not parse error response JSON:", parseError);
-        }
-
-        // Default fallback error message if it's not a quota error
-        loadingMsg.innerHTML = `<strong>AI:</strong> Oops, something went wrong on my end. Please try again later.`;
-        return;
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
       }
 
-      // If response was 200 OK
-      const data = await response.json();
-      console.log("API Response:", data);
-
       loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
+
+      // Default reply
+      let reply = data.reply || "Sorry, something went wrong.";
+
+      // -------------------------------------------------------
+      // Handle Gemini Error returned as text
+      // Example:
+      // Gemini Error: { "error": { "code":429, ... } }
+      // -------------------------------------------------------
+      if (reply.startsWith("Gemini Error:")) {
+
+        try {
+          const jsonText = reply.replace("Gemini Error:", "").trim();
+          const geminiError = JSON.parse(jsonText);
+
+          if (geminiError.error) {
+            const code = geminiError.error.code;
+            const message = geminiError.error.message || "";
+
+            switch (code) {
+
+              case 429:
+                reply = "I'm currently receiving too many requests. Please wait about a minute and try again.";
+                break;
+
+              case 400:
+                reply = "The request couldn't be processed. Please try asking differently.";
+                break;
+
+              case 401:
+              case 403:
+                reply = "The AI service is temporarily unavailable.";
+                break;
+
+              case 500:
+              case 503:
+                reply = "The AI service is temporarily unavailable. Please try again later.";
+                break;
+
+              default:
+                // Show only the first line of Gemini's message
+                reply = message.split("\n")[0];
+            }
+          }
+        } catch (e) {
+          console.error("Unable to parse Gemini error:", e);
+          reply = "Sorry, something went wrong while contacting the AI.";
+        }
+      }
+
+      // -------------------------------------------------------
+      // Handle HTTP Errors
+      // -------------------------------------------------------
+      if (!response.ok) {
+
+        if (response.status === 429) {
+          reply = "I'm receiving too many requests right now. Please try again later.";
+        }
+        else if (response.status >= 500) {
+          reply = "The AI service is temporarily unavailable. Please try again later.";
+        }
+        else if (response.status === 404) {
+          reply = "The AI service could not be reached.";
+        }
+        else {
+          reply = "Sorry, something went wrong.";
+        }
+      }
+
+      loadingMsg.innerHTML = `<strong>AI:</strong> ${reply}`;
 
     } catch (err) {
       console.error("Fetch error:", err);
+
       loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `<strong>AI:</strong> Unable to connect to the AI service.`;
+      loadingMsg.innerHTML =
+        `<strong>AI:</strong> Unable to connect to the AI service. Please check your internet connection and try again.`;
     }
+
     messages.scrollTop = messages.scrollHeight;
   });
-
   loadFeedback();
 });
 
