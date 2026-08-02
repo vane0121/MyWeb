@@ -1,12 +1,8 @@
 {
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "api/chat.js", "use": "@vercel/node" },
-    { "src": "css/challenge.css", "use": "@vercel/static" },
-    { "src": "css/style.css", "use": "@vercel/static" },
-    { "src": "js/challenge.js", "use": "@vercel/static" },
-    { "src": "js/main.js", "use": "@vercel/static" },
-    { "src": "images/logo.png", "use": "@vercel/static" },
-    { "src": "resume/Vanessa-Battung-Resume.pdf", "use": "@vercel/static" }
-  ]
+  "version": 2,
+  "functions": {
+    "api/*.js": {
+      "runtime": "@vercel/node"
+    }
+  }
 }
