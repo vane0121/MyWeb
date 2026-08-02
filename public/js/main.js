@@ -408,7 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const questionBox = document.getElementById("chatMessage");
     const messages = document.getElementById("messages");
     const question = questionBox.value.trim();
-
     if (!question) return;
 
     // Render User message
@@ -416,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
     userMsg.className = "message user";
     userMsg.innerHTML = `<strong>You:</strong> ${question}`;
     messages.appendChild(userMsg);
-
     messages.scrollTop = messages.scrollHeight;
     questionBox.value = "";
 
@@ -425,23 +423,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loadingMsg.className = "message bot loading";
     loadingMsg.innerHTML = `<strong>AI:</strong> <span class="dots">Thinking...</span>`;
     messages.appendChild(loadingMsg);
-
     messages.scrollTop = messages.scrollHeight;
 
     try {
-      // Direct API call - NO AllOrigins proxy
-      // const apiEndpoint =
-      //   "http://vanessabattung-api.runasp.net/api/Chat";
       const apiEndpoint = "/api/chat";
-
       const response = await fetch(apiEndpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: question
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: question })
       });
 
       if (!response.ok) {
@@ -451,28 +440,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = await response.json();
-
       console.log("API Response:", data);
 
-      // Replace loading message
+      // FIX: Put on a single line to remove the extra spacing
       loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `
-            <strong>AI:</strong> ${data.reply}
-        `;
+      loadingMsg.innerHTML = `<strong>AI:</strong> ${data.reply}`;
 
     } catch (err) {
-
       console.error("Fetch error:", err);
-
       loadingMsg.classList.remove("loading");
-      loadingMsg.innerHTML = `
-            <strong>AI:</strong> 
-            Unable to connect to the AI service.
-        `;
+      // FIX: Put on a single line to remove the extra spacing
+      loadingMsg.innerHTML = `<strong>AI:</strong> Unable to connect to the AI service.`;
     }
 
     messages.scrollTop = messages.scrollHeight;
   });
+
 
   loadFeedback();
 });
