@@ -369,20 +369,29 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({ message: question })
       });
 
-      // Handle errors before parsing JSON
+      // Check for errors (like 409 or 429)
       if (!response.ok) {
         loadingMsg.classList.remove("loading");
 
-        if (response.status === 429) {
-          // Friendly message for quota/rate limits
-          loadingMsg.innerHTML = `<strong>AI:</strong> I'm a bit overwhelmed with requests right now! Please try asking me again tomorrow.`;
-        } else {
-          // General server error message
-          loadingMsg.innerHTML = `<strong>AI:</strong> Oops, something went wrong on my end. Please try again later.`;
+        try {
+          // Try reading the error body string to find the quota code
+          const errData = await response.json();
+          const errString = errData.reply || JSON.stringify(errData);
+
+          if (errString.includes('"code": 429') || errString.includes('quota')) {
+            loadingMsg.innerHTML = `<strong>AI:</strong> I'm a bit overwhelmed with requests right now! Please try asking me again tomorrow.`;
+            return;
+          }
+        } catch (parseError) {
+          console.error("Could not parse error response JSON:", parseError);
         }
+
+        // Default fallback error message if it's not a quota error
+        loadingMsg.innerHTML = `<strong>AI:</strong> Oops, something went wrong on my end. Please try again later.`;
         return;
       }
 
+      // If response was 200 OK
       const data = await response.json();
       console.log("API Response:", data);
 
