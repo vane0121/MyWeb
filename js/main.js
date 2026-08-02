@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // const response = await fetch("https://localhost:7284/api/chat", {
-      const response = await fetch("http://vanessabattung-api.runasp.net/api/Chat", {
+      const response = await fetch("https://vanessabattung-api.runasp.net/api/Chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: question })
