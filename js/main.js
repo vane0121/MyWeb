@@ -430,8 +430,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // Direct API call - NO AllOrigins proxy
-      const apiEndpoint =
-        "http://vanessabattung-api.runasp.net/api/Chat";
+      // const apiEndpoint =
+      //   "http://vanessabattung-api.runasp.net/api/Chat";
+      const apiEndpoint = "/api/chat";
 
       const response = await fetch(apiEndpoint, {
         method: "POST",
